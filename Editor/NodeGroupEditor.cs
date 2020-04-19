@@ -42,7 +42,27 @@ namespace XNodeEditor.NodeGroups {
 					// Select nodes inside the group
 					if (Selection.Contains(target)) {
 						List<Object> selection = Selection.objects.ToList();
+						// Select Nodes
 						selection.AddRange(group.GetNodes());
+						// Select Reroutes
+						foreach (Node node in target.graph.nodes) {
+							foreach (NodePort port in node.Ports) {
+								for (int i = 0; i < port.ConnectionCount; i++) {
+									List<Vector2> reroutes = port.GetReroutePoints(i);
+									for (int k = 0; k < reroutes.Count; k++) {
+										Vector2 p = reroutes[k];
+										if (p.x < group.position.x) continue;
+										if (p.y < group.position.y) continue;
+										if (p.x > group.position.x + group.width) continue;
+										if (p.y > group.position.y + group.height + 30) continue;
+										if (NodeEditorWindow.current.selectedReroutes.Any(x => x.port == port && x.connectionIndex == i && x.pointIndex == k)) continue;
+										NodeEditorWindow.current.selectedReroutes.Add(
+											new Internal.RerouteReference(port, i, k)
+										);
+									}
+								}
+							}
+						}
 						Selection.objects = selection.Distinct().ToArray();
 					}
 					break;
