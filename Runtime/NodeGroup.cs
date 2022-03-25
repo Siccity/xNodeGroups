@@ -19,6 +19,7 @@ namespace XNode.NodeGroups {
 			List<Node> result = new List<Node>();
 			foreach (Node node in graph.nodes) {
 				if (node == this) continue;
+				if (node == null) continue;
 				if (node.position.x < this.position.x) continue;
 				if (node.position.y < this.position.y) continue;
 				if (node.position.x > this.position.x + width) continue;
